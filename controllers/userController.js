@@ -98,7 +98,7 @@ const Login = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: true,
-      sameSite: true,
+      sameSite: "none",
       path: "/",
     });
 
@@ -194,8 +194,8 @@ const Logout = async (req, res) => {
   try {
     res.clearCookie("jwt", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure:true,
+      sameSite: "none",
       path: "/",
     });
 
