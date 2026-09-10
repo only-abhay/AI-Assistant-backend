@@ -1,9 +1,12 @@
 import express from "express";
 
-import { generateBlog } from "../controllers/blogController.js";
+import { generateBlog, getMyBlogs } from "../controllers/blogController.js";
+import Protect from "../middleware/protect.js"
+
 
 const router = express.Router();
 
-router.post("/generate", generateBlog);
+router.post("/generate", Protect, generateBlog);
+router.get("/my-blogs", Protect, getMyBlogs);
 
 export default router;

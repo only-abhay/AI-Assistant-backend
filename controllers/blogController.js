@@ -1,7 +1,10 @@
+import BlogModel from "../models/Blogmodel.js";
 import { generateBlogWithAI } from "../services/aiservices.js";
 
 export const generateBlog = async (req, res) => {
   try {
+    const user = req.user
+    console.log(user)
     const { title, keywords, description } = req.body;
 
     // Validation
@@ -24,7 +27,18 @@ export const generateBlog = async (req, res) => {
         message: "Failed to generate blog",
       });
     }
+   if (blog) {
 
+  await BlogModel.create({
+    user:user._id,
+    title,
+    keywords,
+    description,
+    content: blog,
+  });
+}
+   
+    
     return res.status(200).json({
       success: true,
       message: "Blog generated successfully",
@@ -36,6 +50,25 @@ export const generateBlog = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Something went wrong while generating the blog",
+    });
+  }
+};
+
+export const getMyBlogs = async (req, res) => {
+  try {
+    const blogs = await BlogModel.find({ user: req.id })
+      .select("_id title keywords description content createdAt")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      data: blogs,
+    });
+  } catch (error) {
+    console.error("Get Blog History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch blog history",
     });
   }
 };

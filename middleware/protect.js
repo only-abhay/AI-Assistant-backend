@@ -30,6 +30,7 @@ const Protect = async (req, res, next) => {
       process.env.SECRET_KEY_FOR_ENCRPT,
     );
 
+    req.id = decoded.id;
     const user = await UserModel.findById(decoded.id);
 
     if (!user) {

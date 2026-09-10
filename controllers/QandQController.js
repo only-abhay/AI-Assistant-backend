@@ -1,8 +1,10 @@
 
 import ai from "../services/gemini.js";
+import ResumeQuestionModel from "../models/resumeModel.js";
 
  const CreateQandA = async (req, res) => {
   try {
+    const user = req.user
     let resume = req.files?.resume;
 
     if (Array.isArray(resume)) {
@@ -124,7 +126,13 @@ ${prompt}
         rawResponse: aiText,
       });
     }
-
+    console.log(result)
+const savedData = await ResumeQuestionModel.create({
+  user: user._id,
+  jobDescription,
+  questions: result.questions,
+});
+console.log(savedData)
     return res.status(200).json({
       success: true,
       message: "Interview questions generated successfully",
@@ -142,3 +150,26 @@ ${prompt}
 };
 
 export default CreateQandA
+
+export const getMyQuestions = async (req, res) => {
+  try {
+    const records = await ResumeQuestionModel.find({ user: req.id })
+      .select("_id resume jobDescription questions createdAt")
+      .sort({ createdAt: -1 });
+    const data = records.map((record) => ({
+      ...record.toObject(),
+      resume: record.resume || { fileName: null, mimeType: null },
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.error("Get Resume History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch resume interview history",
+    });
+  }
+};
