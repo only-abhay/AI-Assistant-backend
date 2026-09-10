@@ -6,16 +6,16 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 
 import UserRouter from "./routes/userRoutes.js";
-import blogRoutes from "./routes/blogRoutes.js"
-import QandARoutes from "./routes/QandARoutes.js"
+import blogRoutes from "./routes/blogRoutes.js";
+import QandARoutes from "./routes/QandARoutes.js";
 
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cookieParser());
 
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 5000;
 
@@ -25,7 +25,10 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://YOUR-FRONTEND.vercel.app",
+    ],
     credentials: true,
   })
 );
@@ -47,10 +50,10 @@ app.get("/", (req, res) => {
 // ================================
 // Routes
 // ================================
-app.use("/api/blog", blogRoutes);
-app.use("/api/resume",QandARoutes)
-app.use("/api/user", UserRouter);
 
+app.use("/api/blog", blogRoutes);
+app.use("/api/resume", QandARoutes);
+app.use("/api/user", UserRouter);
 
 // ================================
 // Error Middleware
