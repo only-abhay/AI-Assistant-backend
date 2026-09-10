@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = (
   process.env.FRONTEND_URL ||
-  "http://localhost:3000,https://nestro-frontend-nmcr.vercel.app"
+  "http://localhost:3000,https://ai-assistant-frontend-alpha.vercel.app"
 )
   .split(",")
   .map((origin) => origin.trim().replace(/\/$/, ""))
@@ -33,10 +33,7 @@ const allowedOrigins = (
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://ai-assistant-frontend-alpha.vercel.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
