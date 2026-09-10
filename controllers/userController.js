@@ -94,13 +94,13 @@ const Login = async (req, res) => {
 
     const token = generateToken(user);
 
-  res.cookie("jwt", token, {
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-  httpOnly: true,
-  secure: true,
-  sameSite: true,
-  path: "/",
-});
+    res.cookie("jwt", token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+      path: "/",
+    });
 
     return Created(res, "Login successful", user._id);
   } catch (error) {
