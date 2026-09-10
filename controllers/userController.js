@@ -93,7 +93,7 @@ const Login = async (req, res) => {
     }
 
     const token = generateToken(user);
-
+     console.log("Generated Token:", token); // Debugging line to check the token
     res.cookie("jwt", token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
