@@ -27,7 +27,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://YOUR-FRONTEND.vercel.app",
+      "https://ai-assistant-frontend-alpha.vercel.app",
     ],
     credentials: true,
   })
