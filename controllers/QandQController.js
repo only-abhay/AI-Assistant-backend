@@ -126,13 +126,11 @@ ${prompt}
         rawResponse: aiText,
       });
     }
-    console.log(result)
 const savedData = await ResumeQuestionModel.create({
   user: user._id,
   jobDescription,
   questions: result.questions,
 });
-console.log(savedData)
     return res.status(200).json({
       success: true,
       message: "Interview questions generated successfully",

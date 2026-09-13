@@ -4,7 +4,6 @@ import { generateBlogWithAI } from "../services/aiservices.js";
 export const generateBlog = async (req, res) => {
   try {
     const user = req.user
-    console.log(user)
     const { title, keywords, description } = req.body;
 
     // Validation

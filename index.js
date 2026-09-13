@@ -8,6 +8,7 @@ import connectDB from "./config/db.js";
 import UserRouter from "./routes/userRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import QandARoutes from "./routes/QandARoutes.js";
+import PassRouter from "./routes/PassRouter.js"
 
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
@@ -59,6 +60,7 @@ app.get("/", (req, res) => {
 app.use("/api/blog", blogRoutes);
 app.use("/api/resume", QandARoutes);
 app.use("/api/user", UserRouter);
+app.use("/api/pass" ,PassRouter)
 
 // ================================
 // Error Middleware

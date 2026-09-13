@@ -11,7 +11,6 @@ export async function SendOtpMail(normalizedEmail, otp) {
       return false;
     }
 
-    console.log("Sending OTP to:", normalizedEmail);
 
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
@@ -56,8 +55,6 @@ export async function SendOtpMail(normalizedEmail, otp) {
       console.error("Brevo Error:", data);
       return false;
     }
-
-    console.log("OTP email sent successfully:", data.messageId);
     return true;
   } catch (error) {
     console.error("Email Error:", {

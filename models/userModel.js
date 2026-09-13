@@ -49,6 +49,11 @@ const UserSchema = new mongoose.Schema(
       enum: ["user", "admin" , "superadmin"],
       default: "user",
     },
+     pass: {
+      type: Number,
+      enum: [0,1,2],
+      default: 0,
+    },
   },
   {
     timestamps: true,

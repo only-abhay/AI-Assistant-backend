@@ -1,5 +1,5 @@
 import express from "express";
-import { Authorized, Protect } from "../middleware/protect.js";
+import { Authorized, Protect} from "../middleware/protect.js";
 
 
 import {
@@ -11,7 +11,7 @@ import {
   deletebyId,
   GetProfile,
   Logout,
-  adminLogin
+  adminLogin,
 } from "../controllers/userController.js";
 
 const UserRouter = express.Router();

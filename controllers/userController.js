@@ -93,7 +93,7 @@ const Login = async (req, res) => {
     }
 
     const token = generateToken(user);
-     console.log("Generated Token:", token); // Debugging line to check the token
+ // Debugging line to check the token
     res.cookie("jwt", token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
@@ -161,7 +161,6 @@ const deletebyId = async (req, res) => {
 const GetProfile = async (req, res) => {
   try {
     const user = req.user;
-    console.log(user)
 
     if (!user) {
       return res.status(401).json({
@@ -334,7 +333,6 @@ const AddAddress = async (req, res) => {
     });
   }
 };
-
 
 
 export {
