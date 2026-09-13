@@ -9,31 +9,28 @@ const PassSchema = new mongoose.Schema(
       index: true,
     },
 
-    // 0 = Free, 1 = Paid
+    // 0 = none, 1 = free,2=paid
     plan: {
       type: Number,
-      enum: [0, 1],
+      enum: [0, 1, 2],
       default: 0,
       required: true,
     },
 
-    // Usage limits
-    blogLimit: {
-      type: Number,
-      default: 10,
-      required: true,
-    },
-
-    blogUsed: {
+    blogCount: {
       type: Number,
       default: 0,
     },
+    resumeCount: {
+     type: Number,
+     default: 0,
+},
 
-    resumeLimit: {
-      type: Number,
-      default: 10,
-      required: true,
+    lastResetDate: {
+      type: Date,
+      default: Date.now,
     },
+
     Idempotency_Key:{
       type:String,
       default:null

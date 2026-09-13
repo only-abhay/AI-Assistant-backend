@@ -1,10 +1,11 @@
 
 import ai from "../services/gemini.js";
 import ResumeQuestionModel from "../models/resumeModel.js";
+import PassModel from "../models/PassModel.js"
 
- const CreateQandA = async (req, res) => {
+const CreateQandA = async (req, res) => {
   try {
-    const user = req.user
+    const user = req.user;
     let resume = req.files?.resume;
 
     if (Array.isArray(resume)) {
@@ -12,6 +13,8 @@ import ResumeQuestionModel from "../models/resumeModel.js";
     }
 
     const { jobDescription } = req.body;
+
+    // VALIDATION
 
     if (!resume) {
       return res.status(400).json({
@@ -41,7 +44,54 @@ import ResumeQuestionModel from "../models/resumeModel.js";
       });
     }
 
-  const prompt = `
+ 
+    // GET USER PASS
+ 
+
+    const pass = await PassModel.findOne({
+      userId: user._id,
+    });
+
+    if (!pass) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a plan first.",
+      });
+    }
+
+    // DAILY RESET
+
+
+    const today = new Date();
+    const lastReset = new Date(pass.lastResetDate);
+
+    const isNewDay =
+      today.getFullYear() !== lastReset.getFullYear() ||
+      today.getMonth() !== lastReset.getMonth() ||
+      today.getDate() !== lastReset.getDate();
+
+    if (isNewDay) {
+      pass.blogCount = 0;
+      pass.resumeCount = 0;
+      pass.lastResetDate = today;
+
+      await pass.save();
+    }
+    // FREE PLAN RESUME LIMIT
+
+
+    if (pass.plan === 1 && pass.resumeCount >= 10) {
+      return res.status(403).json({
+        success: false,
+        message: "You have reached your daily limit of 10 resume readings.",
+        resumeCount: pass.resumeCount,
+        limit: 10,
+      });
+    }
+
+       // AI PROMPT
+
+    const prompt = `
 You are a good technical interview teacher.
 
 Based on the uploaded resume and the given job description,
@@ -63,7 +113,9 @@ For every question, also provide:
 Mix technical, project-based, experience-based and job-specific questions.
 
 Do not invent anything that is not present in the resume or job description.
-The answer should only explain what a good candidate should answer based on the resume and job description.
+
+The answer should only explain what a good candidate should answer
+based on the resume and job description.
 
 Return exactly this JSON format and nothing else:
 
@@ -78,6 +130,9 @@ Return exactly this JSON format and nothing else:
   ]
 }
 `;
+
+      // GEMINI
+
 
     const response = await ai.models.generateContent({
       model: "gemini-3.6-flash",
@@ -109,6 +164,10 @@ ${prompt}
       });
     }
 
+    // =========================
+    // CLEAN AI RESPONSE
+    // =========================
+
     aiText = aiText
       .replace(/^```json/, "")
       .replace(/^```/, "")
@@ -126,22 +185,39 @@ ${prompt}
         rawResponse: aiText,
       });
     }
-const savedData = await ResumeQuestionModel.create({
-  user: user._id,
-  jobDescription,
-  questions: result.questions,
-});
+
+    // SAVE RESULT
+
+
+    const savedData = await ResumeQuestionModel.create({
+      user: user._id,
+      jobDescription,
+      questions: result.questions,
+    });
+    // INCREASE RESUME COUNT
+
+
+    if (pass.plan === 1) {
+      pass.resumeCount += 1;
+      await pass.save();
+    }
+
+       // RESPONSE
+
     return res.status(200).json({
       success: true,
       message: "Interview questions generated successfully",
       data: result,
+      resumeCount: pass.plan === 1 ? pass.resumeCount : null,
+      limit: pass.plan === 1 ? 10 : "unlimited",
     });
+
   } catch (error) {
     console.error("Resume Q&A Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to generate interview questions server facing to much requests",
+      message: "Failed to generate interview questions",
       error: error.message,
     });
   }

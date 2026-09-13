@@ -16,33 +16,40 @@ const amountInPaise = amountInRupees * 100
 try {
 
 if(plan == "Free"){
-
     // Check if the user already has a Free plan
-    const existingPass = await PassModel.findOne({ userId: id, plan: 0 });
+    const existingPass = await PassModel.findOne({ userId: id });
+    console.log("Existing Pass hai:", existingPass);
     if (existingPass) {
+      if (existingPass.plan == 2) {
         return res.status(400).json({
-            success: false,
-            message: "You already have a Free plan.",
+          success: false,
+          message: "You already have a Pro plan.",
         });
+      }else if (existingPass.plan == 1) {
+        return res.status(400).json({
+          success: false,
+          message: "You already have a Free plan.",
+        });
+      }
     }
 
 const Pass = await PassModel.create({
     userId:id,
-    plan:0,
+    plan:1,
     Idempotency_Key:idempotencyKey
 })
 res.status(200).json({
     success:true,
     Pass:Pass
 })
-}else if(plan =="Pro"){
+}else if(plan == "Pro"){
   const options = {
       amount:amountInPaise,
       currency: "INR",
       receipt: `Order_${id}`,
     };
 
-    const existingPass = await PassModel.findOne({ userId: id, plan: 1 });
+    const existingPass = await PassModel.findOne({ userId: id });
     if (existingPass) {
       return res.status(400).json({
         success: false,
@@ -53,6 +60,7 @@ res.status(200).json({
     
     await PassModel.create({
     userId:id,
+    plan:2,
     razorpayOrderId:razorpayOrder.id,
     Idempotency_Key:idempotencyKey,
     })
